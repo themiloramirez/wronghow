@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>WT? — How Wrong?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #008080;
+    font-family: Tahoma, Geneva, "MS Sans Serif", sans-serif;
+    overflow: hidden;
+  }
+  #root { width: 100%; height: 100vh; position: relative; }
+
+  /* ---------- DESKTOP / NEUTRO ---------- */
+  .desktop {
+    width: 100%; height: 100%;
+    background: #008080;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+
+  /* ---------- WINDOW XP ERROR BOX ---------- */
+  .errwin {
+    width: 560px;
+    max-width: 92vw;
+    background: #ECE9D8;
+    border: 1px solid #0A246A;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    font-size: 13px;
+    color: #000;
+  }
+  .errwin-title {
+    background: linear-gradient(180deg, #2A6FE0 0%, #1748C6 40%, #0A3DAE 50%, #002C9C 100%);
+    color: #fff;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 4px 4px 4px 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    letter-spacing: 0.2px;
+  }
+  .errwin-title .dots { display: flex; gap: 3px; }
+  .errwin-title .dot {
+    width: 18px; height: 16px;
+    background: #ECE9D8;
+    border: 1px solid #0A246A;
+    font-size: 11px; font-weight: bold; color: #000;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .errwin-body { padding: 16px 18px; }
+  .errwin-row { display: flex; gap: 14px; align-items: flex-start; }
+  .errwin-icon {
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 50%;
+    background: #E81123;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: bold; font-size: 22px;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,0.25);
+  }
+  .errwin-code {
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 11px;
+    color: #555;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+  .errwin-msg {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+  .errwin-sample {
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid #ACA899;
+    padding: 8px 10px;
+    font-family: "Courier New", Consolas, monospace;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.45;
+  }
+  .errwin-question {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #0A246A;
+  }
+  .errwin-options {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .opt-btn {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 12px;
+    text-align: left;
+    background: #ECE9D8;
+    border: 1px solid #ACA899;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #000;
+  }
+  .opt-btn:hover {
+    background: #F5F3EC;
+    border-color: #0A246A;
+  }
+  .opt-btn:active {
+    background: #DCD9CC;
+  }
+  .errwin-footer {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 10px 16px 14px;
+  }
+
+  /* progress bar fase 0 */
+  .progress-pips {
+    display: flex; gap: 5px; margin-top: 14px;
+  }
+  .pip {
+    width: 22px; height: 6px;
+    background: #ACA899;
+  }
+  .pip.done { background: #2A6FE0; }
+  .pip.current { background: #0A246A; }
+
+  /* ---------- ACIERTO ---------- */
+  .ok-icon {
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 50%;
+    background: #3BA34A;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: bold; font-size: 18px;
+    box-shadow: inset -3px -3px 6px rgba(0,0,0,0.2);
+  }
+
+  /* ---------- BSOD ---------- */
+  .bsod {
+    width: 100%; height: 100%;
+    background: #0000AA;
+    color: #fff;
+    font-family: "Courier New", Consolas, monospace;
+    padding: 40px 60px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .bsod .face { font-size: 64px; margin-bottom: 18px; font-weight: normal; }
+  .bsod .pct { font-size: 16px; margin-top: 22px; }
+  .bsod .small { font-size: 13px; margin-top: 26px; opacity: 0.85; line-height: 1.6; }
+  .bsod .diag {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #9fd1ff;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 14px;
+  }
+  .bsod .continue-hint {
+    margin-top: 30px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+  .bsod-btn {
+    margin-top: 18px;
+    background: #fff; color: #0000AA;
+    border: none;
+    font-family: "Courier New", Consolas, monospace;
+    font-weight: bold;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    width: fit-content;
+  }
+  .bsod-btn:hover { background: #d8d8d8; }
+
+  /* ---------- REVEAL / META ---------- */
+  .reveal-tag {
+    display: inline-block;
+    background: #0A246A; color: #fff;
+    font-size: 11px; font-weight: bold;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- HUD ---------- */
+  .hud {
+    position: absolute; top: 10px; left: 14px;
+    color: #fff; font-size: 12px;
+    font-family: "Courier New", monospace;
+    opacity: 0.85;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  }
+
+  .fade-in { animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .shake { animation: shake 0.35s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useRef, useCallback } = React;
+
+/* ============ SONIDOS (WebAudio sintetizado, sin assets externos) ============ */
+function playTone(freqs, dur=0.15, type='square', gain=0.05) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = f;
+      g.gain.value = gain;
+      osc.connect(g); g.connect(ctx.destination);
+      const start = ctx.currentTime + i * dur;
+      osc.start(start);
+      g.gain.setValueAtTime(gain, start);
+      g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+      osc.stop(start + dur);
+    });
+  } catch(e) {}
+}
+const sounds = {
+  error: () => playTone([200, 150], 0.18, 'square', 0.06),
+  success: () => playTone([523, 659, 784], 0.13, 'sine', 0.05),
+  crash: () => playTone([180, 120, 80, 60], 0.22, 'sawtooth', 0.07),
+};
+
+/* ============ CONTENIDO ============ */
+
+const DX = {
+  sample_size: {
+    name: "Insensibilidad al tamaño de la muestra",
+    short: "Tamaño de muestra",
+    def: "Sacar conclusiones fuertes a partir de pocos datos, sin considerar que las muestras chicas varían mucho más por puro azar que las grandes.",
+    wiki: "Identificado por Tversky y Kahneman (1971) como uno de los sesgos estadísticos más comunes incluso entre investigadores entrenados: la intuición humana no escala bien con el tamaño de la muestra, y tiende a confiar en pocos datos casi tanto como en muchos.",
+    flavor: "En 1936, la revista Literary Digest predijo con una encuesta de 2.3 millones de personas que Landon ganaría la presidencia de EE.UU. Perdió en una de las derrotas más aplastantes de la historia: la muestra era enorme, pero estaba sesgada (gente con teléfono y auto, en plena Depresión). Tamaño no es lo mismo que representatividad.",
+  },
+  survivorship: {
+    name: "Sesgo del superviviente",
+    short: "Sesgo del superviviente",
+    def: "Sacar conclusiones mirando solo a quienes \"sobrevivieron\" un proceso (tuvieron éxito, llegaron al final), ignorando a quienes no lo lograron y por eso no están a la vista.",
+    wiki: "Popularizado por el estadístico Abraham Wald durante la Segunda Guerra Mundial, al analizar los daños de bala en los aviones que regresaban de combate.",
+    flavor: "El ejército de EE.UU. quería blindar las zonas de los aviones con más agujeros de bala al volver. Wald señaló lo contrario: esas zonas eran las que un avión podía recibir disparos y aun así volver. Había que blindar las zonas SIN agujeros, porque los aviones dañados ahí no volvían nunca: estaban en el fondo del mar.",
+  },
+  base_rate: {
+    name: "Falacia de la tasa base",
+    short: "Tasa base",
+    def: "Ignorar qué tan común es algo en la población general al evaluar una probabilidad específica, dándole más peso a un dato puntual del que merece.",
+    wiki: "Estudiada extensamente en el problema clásico del \"taxi\" y en diagnósticos médicos, donde la precisión de una prueba se confunde con la probabilidad real de tener la condición.",
+    flavor: "Una prueba médica con 99% de precisión para una enfermedad que afecta a 1 de cada 10.000 personas, al dar positivo, todavía implica menos de un 1% real de probabilidad de tener la enfermedad. La rareza de la enfermedad (tasa base) importa más que la precisión de la prueba.",
+  },
+  post_hoc: {
+    name: "Falacia post hoc (correlación ≠ causalidad)",
+    short: "Correlación/causalidad",
+    def: "Asumir que, porque un evento ocurrió antes o junto a otro, el primero causó el segundo.",
+    wiki: "Del latín \"post hoc ergo propter hoc\" (después de esto, por lo tanto a causa de esto), una de las falacias lógicas más antiguas y documentadas en la historia de la filosofía.",
+    flavor: "Durante décadas se observó que los países con más consumo de chocolate por persona ganaban más premios Nobel. Ninguna relación causal real: ambas cosas correlacionan con la riqueza del país. Correlación espuria, no causalidad.",
+  },
+};
+
+// FASE 0: 5 casos, todos sample_size, disfraz creciente. Solo 2 opciones (contraste).
+const phase0Cases = [
+  {
+    code: "0x00000003",
+    text: "Probé el medicamento nuevo en 3 pacientes y los 3 mejoraron.\nConclusión: 100% de efectividad confirmada.",
+    options: [
+      { id: "a", label: "Conclusión válida: si funcionó en todos los casos probados, funciona.", correct: false },
+      { id: "b", label: "La muestra es demasiado chica para sacar esa conclusión.", correct: true },
+    ],
+  },
+  {
+    code: "0x00000004",
+    text: "Lancé una moneda 4 veces y salió cara las 4 veces.\nConclusión: esta moneda está trucada.",
+    options: [
+      { id: "a", label: "4 lanzamientos no alcanzan para afirmar que está trucada.", correct: true },
+      { id: "b", label: "4 caras seguidas es estadísticamente imposible con una moneda normal.", correct: false },
+    ],
+  },
+  {
+    code: "0x0000002A",
+    text: "El nuevo gerente llegó hace una semana. Las ventas subieron los\núltimos 2 días.\nConclusión: es un genio de las ventas.",
+    options: [
+      { id: "a", label: "2 días de datos no permiten atribuirle el cambio al gerente.", correct: true },
+      { id: "b", label: "Si las ventas subieron justo cuando llegó, la relación es clara.", correct: false },
+    ],
+  },
+  {
+    code: "0x000001F4",
+    text: "El condado más pequeño del país tiene, este año, la tasa más alta\nde cierto tipo de cáncer de todo el territorio.\nConclusión: algo en ese condado en particular causa la enfermedad.",
+    options: [
+      { id: "a", label: "Con pocos habitantes, un solo caso de más altera mucho la tasa: puede ser solo ruido estadístico.", correct: true },
+      { id: "b", label: "Una tasa así de alta no puede deberse al azar; debe haber una causa ambiental local.", correct: false },
+    ],
+  },
+  {
+    code: "0xDEADBEEF",
+    text: "Mi abuela fumó toda su vida y vivió hasta los 95 años.\nConclusión: fumar no es tan dañino como dicen.",
+    options: [
+      { id: "a", label: "Es un testimonio real y personal: tiene más peso que una estadística fría.", correct: false },
+      { id: "b", label: "Un solo caso (n=1) no puede contradecir un patrón observado en millones de personas.", correct: true },
+    ],
+  },
+];
+
+// FASE 1: nuevo Dx (survivorship), 4 opciones, sample_size como distractor.
+const phase1Cases = [
+  {
+    code: "0x5F2A001",
+    dx: "survivorship",
+    text: "Encuesté a 50 millonarios sobre cómo llegaron ahí.\nNinguno terminó la universidad.\nConclusión: la universidad es innecesaria para el éxito.",
+    options: [
+      { id: "a", dx: "survivorship", label: "Solo se consultó a quienes ya tuvieron éxito; no sabemos cuántos no-graduados fracasaron.", correct: true },
+      { id: "b", dx: "sample_size", label: "50 personas es una muestra demasiado chica para generalizar.", correct: false },
+      { id: "c", dx: "post_hoc", label: "No haber estudiado y ser millonario coinciden, pero eso no prueba causalidad.", correct: false },
+      { id: "d", dx: "base_rate", label: "No se considera qué porcentaje de la población general tampoco estudió.", correct: false },
+    ],
+  },
+  {
+    code: "0x5F2A002",
+    dx: "survivorship",
+    text: "Un edificio bombardeado en la guerra mostró que las partes del avión\nque volvían con más agujeros de bala eran las alas.\nConclusión inicial: hay que blindar las alas.",
+    options: [
+      { id: "a", dx: "post_hoc", label: "Los agujeros causaron que volvieran dañados, así que ahí se debe reforzar.", correct: false },
+      { id: "b", dx: "survivorship", label: "Solo se analizaron los aviones que lograron volver; los que cayeron no están en la muestra.", correct: true },
+      { id: "c", dx: "base_rate", label: "No se sabe qué porcentaje de aviones totales tenía agujeros en las alas.", correct: false },
+      { id: "d", dx: "sample_size", label: "Se analizaron muy pocos aviones para sacar una conclusión confiable.", correct: false },
+    ],
+  },
+];
+
+/* ============ COMPONENTES ============ */
+
+function ErrorWindow({ caseData, onAnswer, phaseLabel, pipsTotal, pipsDone, shaking }) {
+  return (
+    <div className={"errwin fade-in" + (shaking ? " shake" : "")}>
+      <div className="errwin-title">
+        <span>{phaseLabel}</span>
+        <div className="dots">
+          <div className="dot">_</div>
+          <div className="dot">□</div>
+          <div className="dot">×</div>
+        </div>
+      </div>
+      <div className="errwin-body">
+        <div className="errwin-row">
+          <div className="errwin-icon">!</div>
+          <div style={{flex: 1}}>
+            <div className="errwin-msg">Se ha detectado un error de razonamiento.</div>
+            <div className="errwin-code">Código de error: {caseData.code}</div>
+          </div>
+        </div>
+        <div className="errwin-sample">{caseData.text}</div>
+        <div className="errwin-question">¿Cuál es la causa raíz del error?</div>
+        <div className="errwin-options">
+          {caseData.options.map(opt => (
+            <button key={opt.id} className="opt-btn" onClick={() => onAnswer(opt)}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        {pipsTotal ? (
+          <div className="progress-pips">
+            {Array.from({length: pipsTotal}).map((_, i) => (
+              <div key={i} className={"pip" + (i < pipsDone ? " done" : i === pipsDone ? " current" : "")}></div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function SuccessWindow({ dxName, onNext, isLast }) {
+  return (
+    <div className="errwin fade-in">
+      <div className="errwin-title" style={{background: "linear-gradient(180deg, #3FAE4F 0%, #2E8C3C 50%, #1F6B2A 100%)"}}>
+        <span>Sistema estable</span>
+        <div className="dots">
+          <div className="dot">_</div>
+          <div className="dot">□</div>
+          <div className="dot">×</div>
+        </div>
+      </div>
+      <div className="errwin-body">
+        <div className="errwin-row">
+          <div className="ok-icon">✓</div>
+          <div style={{flex: 1}}>
+            <div className="errwin-msg">Error resuelto correctamente.</div>
+            <div className="errwin-code">Diagnóstico: {dxName}</div>
+          </div>
+        </div>
+        <div className="errwin-footer">
+          <button className="opt-btn" style={{width: 'fit-content'}} onClick={onNext}>
+            {isLast ? "Continuar →" : "Siguiente caso →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BSOD({ correctOption, dxName, onRetry }) {
+  return (
+    <div className="bsod fade-in">
+      <div className="face">:(</div>
+      <div>Tu razonamiento encontró un problema y debe reiniciarse.</div>
+      <div className="pct">Estamos recopilando información del error. Esto puede tardar unos instantes.</div>
+      <div className="diag">
+        DIAGNÓSTICO TÉCNICO<br/>
+        ***  CAUSA_REAL: {dxName}<br/>
+        ***  RESPUESTA_CORRECTA: "{correctOption.label}"
+      </div>
+      <div className="continue-hint">Presioná reintentar para volver a intentar este caso.</div>
+      <button className="bsod-btn" onClick={onRetry}>Reintentar</button>
+    </div>
+  );
+}
+
+function Vademecum({ vademecum, onClose }) {
+  const entries = Object.entries(vademecum);
+  return (
+    <div className="errwin fade-in" style={{width: 600}}>
+      <div className="errwin-title">
+        <span>Vademécum de errores</span>
+        <div className="dots">
+          <div className="dot">_</div>
+          <div className="dot">□</div>
+          <div className="dot" onClick={onClose} style={{cursor:'pointer'}}>×</div>
+        </div>
+      </div>
+      <div className="errwin-body" style={{maxHeight: '70vh', overflowY: 'auto'}}>
+        {entries.length === 0 && (
+          <div className="errwin-msg">Todavía no fichaste ningún error.</div>
+        )}
+        {entries.map(([key, entry]) => {
+          const dx = DX[key];
+          return (
+            <div key={key} style={{marginBottom: 16, paddingBottom: 14, borderBottom: '1px solid #D4D0C8'}}>
+              <div style={{display:'flex', alignItems:'center', gap: 8}}>
+                <span className="reveal-tag" style={{background: entry.mastered ? '#1F6B2A' : '#0A246A'}}>
+                  {entry.mastered ? 'DOMINADO' : 'FICHADO'}
+                </span>
+                <b style={{fontSize: 14}}>{dx.name}</b>
+              </div>
+              <div className="errwin-msg" style={{marginTop: 6}}>{dx.def}</div>
+              <div className="errwin-sample" style={{marginTop: 8, whiteSpace: 'pre-wrap'}}>
+                <b>Wiki interna:</b> {dx.wiki}
+              </div>
+              <div className="errwin-sample" style={{marginTop: 8, whiteSpace: 'pre-wrap', background:'#FFFDF0'}}>
+                <b>Caso histórico:</b> {dx.flavor}
+              </div>
+              <div className="errwin-code" style={{marginTop: 8}}>
+                Caso índice: "{entry.indexCase.split("\n")[0]}..."
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+  return (
+    <div className="errwin fade-in">
+      <div className="errwin-title">
+        <span>Mensaje del sistema</span>
+        <div className="dots">
+          <div className="dot">_</div>
+          <div className="dot">□</div>
+          <div className="dot">×</div>
+        </div>
+      </div>
+      <div className="errwin-body">
+        <div className="reveal-tag">DIAGNÓSTICO COMPLETO</div>
+        <div className="errwin-msg" style={{marginTop: 6}}>
+          Los 5 casos anteriores compartían la misma causa raíz: <b>insensibilidad al tamaño de la muestra</b>.
+          Sacar conclusiones fuertes a partir de pocos datos.
+        </div>
+        <div className="errwin-sample" style={{marginTop: 12}}>
+          Por cierto... ¿notaste que fueron exactamente 5 casos los que usamos
+          para "demostrarte" este patrón?{"\n\n"}
+          Bienvenido a tu primera lección. 😏
+        </div>
+        <div className="errwin-footer">
+          <button className="opt-btn" style={{width: 'fit-content'}} onClick={onNext}>
+            Ver más errores comunes →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  // stage: 'phase0' | 'meta' | 'phase1' | 'done'
+  const [stage, setStage] = useState('phase0');
+  const [caseIdx, setCaseIdx] = useState(0);
+  const [view, setView] = useState('question'); // 'question' | 'success' | 'fail'
+  const [shaking, setShaking] = useState(false);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [showVademecum, setShowVademecum] = useState(false);
+
+  // vademecum: { [dxKey]: { seen: bool, mastered: bool, indexCase: string } }
+  const [vademecum, setVademecum] = useState({
+    sample_size: { seen: true, mastered: false, indexCase: phase0Cases[0].text },
+  });
+  // tracking de aciertos dentro de la fase actual, para saber cuando se "domina"
+  const [phaseHits, setPhaseHits] = useState({});
+
+  const currentCases = stage === 'phase0' ? phase0Cases : phase1Cases;
+  const currentCase = currentCases[caseIdx];
+
+  const fichar = useCallback((dxKey, indexCaseText) => {
+    setVademecum(v => {
+      if (v[dxKey]) return v;
+      return { ...v, [dxKey]: { seen: true, mastered: false, indexCase: indexCaseText } };
+    });
+  }, []);
+
+  const dominar = useCallback((dxKey) => {
+    setVademecum(v => ({ ...v, [dxKey]: { ...v[dxKey], mastered: true } }));
+  }, []);
+
+  const handleAnswer = useCallback((opt) => {
+    setScore(s => ({ correct: s.correct + (opt.correct ? 1 : 0), total: s.total + 1 }));
+    const dxKey = stage === 'phase0' ? 'sample_size' : currentCase.dx;
+    if (!vademecum[dxKey]) fichar(dxKey, currentCase.text);
+
+    if (opt.correct) {
+      sounds.success();
+      setPhaseHits(h => {
+        const next = { ...h, [caseIdx]: true };
+        const allHit = currentCases.every((_, i) => next[i]);
+        if (allHit) dominar(dxKey);
+        return next;
+      });
+      setView('success');
+    } else {
+      sounds.crash();
+      setShaking(true);
+      setTimeout(() => {
+        setShaking(false);
+        setView('fail');
+      }, 350);
+    }
+  }, [stage, currentCase, caseIdx, currentCases, vademecum, fichar, dominar]);
+
+  const goNext = useCallback(() => {
+    setView('question');
+    if (caseIdx + 1 < currentCases.length) {
+      setCaseIdx(caseIdx + 1);
+    } else {
+      if (stage === 'phase0') {
+        setStage('meta');
+      } else if (stage === 'phase1') {
+        setStage('done');
+      }
+    }
+  }, [caseIdx, currentCases.length, stage]);
+
+  const startPhase1 = useCallback(() => {
+    setStage('phase1');
+    setCaseIdx(0);
+    setPhaseHits({});
+    fichar(phase1Cases[0].dx === 'survivorship' ? 'survivorship' : phase1Cases[0].dx, phase1Cases[0].text);
+    setView('question');
+  }, [fichar]);
+
+  const retry = useCallback(() => {
+    setView('question');
+  }, []);
+
+  let content = null;
+
+  if (stage === 'phase0' || stage === 'phase1') {
+    const dxKey = stage === 'phase0' ? 'sample_size' : currentCase.dx;
+    if (view === 'question') {
+      content = (
+        <ErrorWindow
+          caseData={currentCase}
+          onAnswer={handleAnswer}
+          phaseLabel={stage === 'phase0' ? "Error del sistema — Fase 0" : "Error del sistema — Fase 1"}
+          pipsTotal={currentCases.length}
+          pipsDone={caseIdx}
+          shaking={shaking}
+        />
+      );
+    } else if (view === 'success') {
+      content = (
+        <SuccessWindow
+          dxName={DX[dxKey].name}
+          onNext={goNext}
+          isLast={caseIdx + 1 >= currentCases.length}
+        />
+      );
+    } else if (view === 'fail') {
+      const correctOpt = currentCase.options.find(o => o.correct);
+      content = (
+        <BSOD
+          correctOption={correctOpt}
+          dxName={DX[stage === 'phase0' ? 'sample_size' : correctOpt.dx].name}
+          onRetry={retry}
+        />
+      );
+    }
+  } else if (stage === 'meta') {
+    content = <MetaReveal onNext={startPhase1} />;
+  } else if (stage === 'done') {
+    content = (
+      <div className="errwin fade-in">
+        <div className="errwin-title">
+          <span>Fin de la demo</span>
+          <div className="dots"><div className="dot">_</div><div className="dot">□</div><div className="dot">×</div></div>
+        </div>
+        <div className="errwin-body">
+          <div className="errwin-msg">Completaste el prototipo.</div>
+          <div className="errwin-sample" style={{marginTop: 10}}>
+            Aciertos: {score.correct} / {score.total}{"\n"}
+            Diagnósticos en tu vademécum: {Object.keys(vademecum).length}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showVademecum) {
+    content = <Vademecum vademecum={vademecum} onClose={() => setShowVademecum(false)} />;
+  }
+
+  const isBsod = view === 'fail' && (stage === 'phase0' || stage === 'phase1') && !showVademecum;
+  const hasVademecumEntries = Object.keys(vademecum).length > 0;
+
+  return (
+    <div className={isBsod ? "" : "desktop"} style={isBsod ? {width:'100%', height:'100%'} : {}}>
+      {!isBsod && (
+        <div className="hud">WT? — How Wrong? · prototipo</div>
+      )}
+      {!isBsod && hasVademecumEntries && (
+        <button
+          className="opt-btn"
+          style={{position:'absolute', top: 8, right: 14, width:'fit-content', zIndex: 10}}
+          onClick={() => setShowVademecum(v => !v)}
+        >
+          📖 Vademécum ({Object.keys(vademecum).length})
+        </button>
+      )}
+      {content}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
