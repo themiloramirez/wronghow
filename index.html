@@ -250,7 +250,7 @@ const DX = {
   sample_size: {
     name: "Insensibilidad al tamaño de la muestra",
     short: "Tamaño de muestra",
-    def: "Sacar conclusiones fuertes a partir de pocos datos, sin considerar que las muestras chicas varían mucho más por puro azar que las grandes.",
+    def: "Sacar conclusiones fuertes a partir de pocos datos, sin considerar que las muestras pequeñas varían mucho más por puro azar que las grandes.",
     wiki: "Identificado por Tversky y Kahneman (1971) como uno de los sesgos estadísticos más comunes incluso entre investigadores entrenados: la intuición humana no escala bien con el tamaño de la muestra, y tiende a confiar en pocos datos casi tanto como en muchos.",
     flavor: "En 1936, la revista Literary Digest predijo con una encuesta de 2.3 millones de personas que Landon ganaría la presidencia de EE.UU. Perdió en una de las derrotas más aplastantes de la historia: la muestra era enorme, pero estaba sesgada (gente con teléfono y auto, en plena Depresión). Tamaño no es lo mismo que representatividad.",
   },
@@ -284,14 +284,14 @@ const phase0Cases = [
     text: "Probé el medicamento nuevo en 3 pacientes y los 3 mejoraron.\nConclusión: 100% de efectividad confirmada.",
     options: [
       { id: "a", label: "Conclusión válida: si funcionó en todos los casos probados, funciona.", correct: false },
-      { id: "b", label: "La muestra es demasiado chica para sacar esa conclusión.", correct: true },
+      { id: "b", label: "La muestra es demasiado pequeña para sacar esa conclusión.", correct: true },
     ],
   },
   {
     code: "0x00000004",
-    text: "Lancé una moneda 4 veces y salió cara las 4 veces.\nConclusión: esta moneda está trucada.",
+    text: "Lancé una moneda 4 veces y salió cara las 4 veces.\nConclusión: esta moneda tiene trampa.",
     options: [
-      { id: "a", label: "4 lanzamientos no alcanzan para afirmar que está trucada.", correct: true },
+      { id: "a", label: "4 lanzamientos no alcanzan para afirmar que tiene trampa.", correct: true },
       { id: "b", label: "4 caras seguidas es estadísticamente imposible con una moneda normal.", correct: false },
     ],
   },
@@ -329,7 +329,7 @@ const phase1Cases = [
     text: "Encuesté a 50 millonarios sobre cómo llegaron ahí.\nNinguno terminó la universidad.\nConclusión: la universidad es innecesaria para el éxito.",
     options: [
       { id: "a", dx: "survivorship", label: "Solo se consultó a quienes ya tuvieron éxito; no sabemos cuántos no-graduados fracasaron.", correct: true },
-      { id: "b", dx: "sample_size", label: "50 personas es una muestra demasiado chica para generalizar.", correct: false },
+      { id: "b", dx: "sample_size", label: "50 personas es una muestra demasiado pequeña para generalizar.", correct: false },
       { id: "c", dx: "post_hoc", label: "No haber estudiado y ser millonario coinciden, pero eso no prueba causalidad.", correct: false },
       { id: "d", dx: "base_rate", label: "No se considera qué porcentaje de la población general tampoco estudió.", correct: false },
     ],
@@ -337,7 +337,7 @@ const phase1Cases = [
   {
     code: "0x5F2A002",
     dx: "survivorship",
-    text: "Un edificio bombardeado en la guerra mostró que las partes del avión\nque volvían con más agujeros de bala eran las alas.\nConclusión inicial: hay que blindar las alas.",
+    text: "Un análisis de aviones de combate que regresaron de misiones mostró\nque las partes con más agujeros de bala eran las alas.\nConclusión inicial: hay que blindar las alas.",
     options: [
       { id: "a", dx: "post_hoc", label: "Los agujeros causaron que volvieran dañados, así que ahí se debe reforzar.", correct: false },
       { id: "b", dx: "survivorship", label: "Solo se analizaron los aviones que lograron volver; los que cayeron no están en la muestra.", correct: true },
